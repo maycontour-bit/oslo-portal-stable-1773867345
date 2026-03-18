@@ -3,264 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oslo Partners | Portal do Sócio v6.0</title>
+    <title>Oslo Partners | Private Banking Portal</title>
     <style>
         :root {
             --navy: #193D5A;
             --dark: #08121a;
-            --sidebar: #060c12;
+            --card: #0d1e2b;
             --gold: #D4AF37;
             --text: #ffffff;
-            --card: #122A42;
+            --border: rgba(212, 175, 55, 0.2);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background-color: var(--dark);
-            color: var(--text);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .sidebar {
-            width: 260px;
-            background-color: var(--sidebar);
-            border-right: 1px solid var(--navy);
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-        }
-        .logo {
-            font-size: 22px;
-            font-weight: 900;
-            margin-bottom: 50px;
-            letter-spacing: -1px;
-        }
+        body { background-color: var(--dark); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; height: 100vh; overflow: hidden; }
+        
+        /* LOGIN SCREEN */
+        #login-screen { position: fixed; inset: 0; background: var(--dark); z-index: 1000; display: flex; align-items: center; justify-content: center; transition: 0.5s; }
+        .login-box { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--border); width: 350px; text-align: center; }
+        .login-input { width: 100%; padding: 15px; background: var(--dark); border: 1px solid var(--navy); color: white; border-radius: 8px; margin-bottom: 15px; outline: none; }
+        .login-btn { width: 100%; padding: 15px; background: var(--gold); border: none; font-weight: 900; border-radius: 8px; cursor: pointer; }
+
+        /* MAIN LAYOUT */
+        #app-screen { display: none; height: 100vh; flex-direction: row; }
+        .sidebar { width: 280px; background: #060c12; border-right: 1px solid var(--navy); padding: 40px 20px; display: flex; flex-direction: column; }
+        .content { flex-grow: 1; padding: 60px; overflow-y: auto; }
+        
+        .logo { font-size: 22px; font-weight: 900; margin-bottom: 50px; letter-spacing: -1px; }
         .logo span { color: var(--gold); }
-        .nav-btn {
-            background: transparent;
-            border: none;
-            color: var(--text);
-            padding: 15px;
-            text-align: left;
-            font-weight: bold;
-            font-size: 12px;
-            cursor: pointer;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .nav-btn:hover { background: rgba(25, 61, 90, 0.4); }
-        .nav-btn.active { background-color: var(--gold); color: #000; }
         
-        .content {
-            flex-grow: 1;
-            padding: 60px;
-            overflow-y: auto;
-        }
+        .nav-btn { background: transparent; border: none; color: var(--text); padding: 15px; text-align: left; font-weight: 700; font-size: 13px; cursor: pointer; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; opacity: 0.6; }
+        .nav-btn:hover { opacity: 1; background: rgba(25, 61, 90, 0.4); }
+        .nav-btn.active { background-color: var(--gold); color: #000; opacity: 1; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
+
+        /* CARDS & UI */
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        h2 { font-size: 32px; font-weight: 900; margin-bottom: 10px; }
-        .subtitle { color: var(--gold); font-size: 12px; font-weight: bold; margin-bottom: 40px; text-transform: uppercase; }
+        h2 { font-size: 32px; font-weight: 900; margin-bottom: 5px; }
+        .subtitle { color: var(--gold); font-size: 11px; font-weight: 700; margin-bottom: 40px; letter-spacing: 2px; }
         
-        .card-container { display: flex; gap: 30px; }
-        .card {
-            background-color: var(--card);
-            border: 1px solid var(--navy);
-            padding: 30px;
-            border-radius: 20px;
-            flex: 1;
-        }
-        .result-box {
-            background-color: var(--navy);
-            border: 2px solid var(--gold);
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            flex: 1;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
+        .card { background: var(--card); border: 1px solid var(--border); padding: 30px; border-radius: 24px; }
+        .res-box { background: var(--navy); border: 2px solid var(--gold); padding: 40px; border-radius: 24px; text-align: center; }
         
-        .field { margin-bottom: 25px; }
-        label { display: block; font-size: 10px; font-weight: bold; color: var(--gold); margin-bottom: 10px; text-transform: uppercase; }
-        input {
-            width: 100%;
-            background: var(--dark);
-            border: 1px solid var(--navy);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 22px;
-            font-weight: bold;
-            outline: none;
-        }
-        input:focus { border-color: var(--gold); }
-        
-        .big-number { font-size: 48px; font-weight: 900; color: var(--gold); margin: 20px 0; }
-        
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-        .prod-btn {
-            background: #0d1e2b;
-            border: 1px solid var(--navy);
-            color: white;
-            padding: 12px 5px;
-            font-size: 10px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
+        label { display: block; font-size: 10px; font-weight: 800; color: var(--gold); margin-bottom: 10px; text-transform: uppercase; }
+        .input-group { position: relative; margin-bottom: 25px; }
+        .currency-input { width: 100%; background: var(--dark); border: 1px solid var(--navy); color: white; padding: 18px; border-radius: 12px; font-size: 24px; font-weight: 900; outline: none; }
+        .currency-input:focus { border-color: var(--gold); }
+
+        .big-res { font-size: 52px; font-weight: 900; color: var(--gold); margin: 20px 0; }
+
+        .prod-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 30px; }
+        .prod-btn { background: #0d1e2b; border: 1px solid var(--navy); color: white; padding: 12px; font-size: 10px; font-weight: bold; border-radius: 10px; cursor: pointer; transition: 0.2s; }
         .prod-btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
-        
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; padding: 20px; }
-            .card-container { flex-direction: column; }
-            .product-grid { grid-template-columns: repeat(2, 1fr); }
-        }
+
+        /* SETTINGS TABLE */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid var(--navy); color: var(--gold); }
+        td { padding: 12px; border-bottom: 1px solid rgba(25, 61, 90, 0.3); }
+        .setting-input { background: transparent; border: 1px solid var(--navy); color: white; padding: 5px; border-radius: 4px; width: 60px; text-align: center; }
+
+        @media (max-width: 768px) { #app-screen { flex-direction: column; } .sidebar { width: 100%; height: auto; } }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="logo">OSLO <span>PARTNERS</span></div>
-        <button id="nav-pj1" class="nav-btn active" onclick="switchTab('pj1')">📈 Investimentos</button>
-        <button id="nav-pj2" class="nav-btn" onclick="switchTab('pj2')">💰 Multi-Produtos</button>
-        <div style="margin-top: auto; font-size: 10px; opacity: 0.3; text-align: center;">MAYCON VALENTE | CHAIRMAN</div>
+    <div id="login-screen">
+        <div class="login-box">
+            <h1 class="logo" style="margin-bottom: 30px;">OSLO <span>PARTNERS</span></h1>
+            <input type="text" id="user" placeholder="Usuário" class="login-input">
+            <input type="password" id="pass" placeholder="Senha" class="login-input">
+            <button class="login-btn" onclick="login()">ACESSAR PORTAL</button>
+        </div>
     </div>
 
-    <div class="content">
-        <!-- PJ1 -->
-        <div id="pj1" class="tab-content active">
-            <h2>Simulador de Recorrência</h2>
-            <p class="subtitle">Ativos sob Custódia (AUC)</p>
-            
-            <div class="card-container">
-                <div class="card">
-                    <div class="field">
-                        <label>Captação Líquida (NNM) R$</label>
-                        <input type="number" id="nnm" value="10000000" oninput="calculate()">
-                    </div>
-                    <div class="field">
-                        <label>ROA da Carteira (% a.a.)</label>
-                        <input type="number" id="roa" value="0.70" step="0.05" oninput="calculate()">
-                    </div>
-                </div>
-                <div class="result-box">
-                    <p style="font-size: 12px; opacity: 0.7;">SUA RECEITA MENSAL EST.</p>
-                    <div id="res1" class="big-number">R$ 23.333,33</div>
-                    <p style="font-size: 10px; opacity: 0.4;">Cálculo: (Volume * ROA * 0.8 * 0.5) / 12</p>
-                </div>
-            </div>
+    <div id="app-screen">
+        <div class="sidebar">
+            <div class="logo">OSLO <span>PARTNERS</span></div>
+            <nav>
+                <button id="nav-pj1" class="nav-btn active" onclick="switchTab('pj1')">📈 DASHBOARD PJ1</button>
+                <button id="nav-pj2" class="nav-btn" onclick="switchTab('pj2')">💰 MULTI-PRODUTOS</button>
+                <button id="nav-finder" class="nav-btn" onclick="switchTab('finder')">🤝 GESTÃO FINDER</button>
+                <button id="nav-settings" class="nav-btn" onclick="switchTab('settings')">⚙️ CONFIGURAÇÕES</button>
+            </nav>
+            <div style="margin-top: auto; font-size: 10px; opacity: 0.3; text-align: center;">MAYCON VALENTE | CHAIRMAN</div>
         </div>
 
-        <!-- PJ2 -->
-        <div id="pj2" class="tab-content">
-            <h2>Ecossistema 12 Verticais</h2>
-            <p class="subtitle">Monetização de Deal e Estruturação</p>
-            
-            <div id="prod-grid" class="product-grid">
-                <!-- Injected via JS -->
-            </div>
-
-            <div class="card-container">
-                <div class="card">
-                    <div class="field">
-                        <label id="input-label">VALOR DA OPERAÇÃO R$</label>
-                        <input type="number" id="pj2-val" value="1000000" oninput="calculate()">
+        <div class="content">
+            <!-- PJ1 -->
+            <div id="pj1" class="tab-content active">
+                <h2>Simulador de Recorrência</h2>
+                <p class="subtitle">Recorrência Mensal de Investimentos</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                    <div class="card">
+                        <div class="input-group">
+                            <label>Captação Líquida (NNM)</label>
+                            <input type="text" id="nnm-in" class="currency-input" oninput="handleCurrency(this); calculate();">
+                        </div>
+                        <div class="input-group">
+                            <label>ROA Médio da Carteira (%)</label>
+                            <input type="number" id="roa-in" class="currency-input" step="0.05" value="0.70" oninput="calculate()">
+                        </div>
                     </div>
-                    <div id="ptax-field" class="field" style="display:none;">
-                        <label>Câmbio (USD/BRL)</label>
-                        <input type="number" id="ptax" value="5.20" step="0.01" oninput="calculate()">
+                    <div class="res-box">
+                        <label>Sua Receita Mensal Estimada</label>
+                        <div id="pj1-res" class="big-res">R$ 0,00</div>
+                        <p style="font-size: 10px; opacity: 0.4;">Cálculo: (NNM * ROA * 0.8 * 0.5) / 12</p>
                     </div>
                 </div>
-                <div class="result-box" style="background-color: var(--gold); color: #000; border: none;">
-                    <p style="font-size: 12px; font-weight: bold; opacity: 0.6;">SEU GANHO LÍQUIDO</p>
-                    <div id="res2" class="big-number" style="color: #000;">R$ 0,00</div>
-                    <p style="font-size: 10px; font-weight: bold;">PAGAMENTO UPFRONT</p>
+            </div>
+
+            <!-- PJ2 -->
+            <div id="pj2" class="tab-content">
+                <h2>Ecossistema 12 Verticais</h2>
+                <p class="subtitle">Monetização de Deal e Estruturação</p>
+                <div id="prod-grid" class="prod-grid"></div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px;">
+                    <div class="card">
+                        <div class="input-group">
+                            <label id="pj2-label">VOLUME DA OPERAÇÃO</label>
+                            <input type="text" id="pj2-in" class="currency-input" oninput="handleCurrency(this); calculate();">
+                        </div>
+                        <div id="ptax-box" class="hidden">
+                            <label>Câmbio de Referência (BRL)</label>
+                            <input type="number" id="ptax-in" class="currency-input" value="5.20" oninput="calculate()">
+                        </div>
+                    </div>
+                    <div class="res-box" style="background: var(--gold); color: black; border: none;">
+                        <label style="color: rgba(0,0,0,0.5)">Seu Ganho Líquido (Upfront)</label>
+                        <div id="pj2-res" class="big-res" style="color: black;">R$ 0,00</div>
+                        <div id="f-alert" class="hidden" style="font-size: 10px; font-weight: 900;">⚠️ FINDER DEDUZIDO</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FINDER -->
+            <div id="finder" class="tab-content">
+                <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+                    <h2>Gestão de Finder</h2>
+                    <p class="subtitle">Parcerias de Originação</p>
+                    <div class="card">
+                        <button id="f-toggle" onclick="toggleFinder()" class="login-btn" style="background: var(--navy); color: white; margin-bottom: 30px;">ATIVAR FINDER</button>
+                        <div id="f-ui" class="hidden">
+                            <label>Percentual do Parceiro (%)</label>
+                            <input type="number" id="f-pct" class="currency-input" value="20" oninput="calculate()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SETTINGS -->
+            <div id="settings" class="tab-content">
+                <h2>Premissas de Partnership</h2>
+                <p class="subtitle">Painel de Controle Maycon</p>
+                <div class="card">
+                    <label>Imposto Geral Oslo (%)</label>
+                    <input type="number" id="cfg-tax" value="20" style="width: 100px;" oninput="updateSettings()">
+                    <table>
+                        <thead>
+                            <tr><th>Ativo</th><th>Bruto (%)</th><th>Mesa (%)</th><th>Assessor (%)</th><th>Escritório (%)</th></tr>
+                        </thead>
+                        <tbody id="settings-body"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const rules = {
-            'af': { name: 'American Fidelity', brute: 70, mesa: 35, advisor: 35, office: 30, unit: 'Prêmio US$', type: 'p' },
-            'finep': { name: 'Captação (Finep)', brute: 3, mesa: 10, advisor: 40, office: 50, unit: 'Deal R$', type: 'v' },
-            'ma': { name: 'M&A (Deal)', brute: 0.8, mesa: 30, advisor: 20, office: 50, unit: 'Deal R$', type: 'v' },
-            'mkt': { name: 'Mercado Capitais', brute: 2, mesa: 30, advisor: 20, office: 50, unit: 'Deal R$', type: 'v' },
-            'he': { name: 'Home Equity', brute: 3.5, mesa: 20, advisor: 40, office: 40, unit: 'Crédito R$', type: 'v' },
-            'trust': { name: 'Trust Offshore', brute: 45, mesa: 20, advisor: 40, office: 40, unit: 'Aporte R$', type: 'p' },
-            'spec': { name: 'Special Situations', brute: 15, mesa: 13.3, advisor: 53.3, office: 33.3, unit: 'Volume R$', type: 'v' },
-            'cons': { name: 'Consórcios', brute: 2, mesa: 35, advisor: 35, office: 30, unit: 'Carta R$', type: 'v' },
-            'seg': { name: 'Seguros Nacionais', brute: 40, mesa: 35, advisor: 35, office: 30, unit: 'Prêmio R$', type: 'p' },
-            'fx': { name: 'Câmbio (Spread)', brute: 1, mesa: 10, advisor: 35, office: 55, unit: 'Volume R$', type: 'v' },
-            'imob': { name: 'Financ. Imob.', brute: 1, mesa: 0, advisor: 50, office: 50, unit: 'Financ. R$', type: 'v' },
-            'gest': { name: 'Gestão Patrim.', brute: 1, mesa: 0, advisor: 50, office: 50, unit: 'Operação R$', type: 'v' }
+        let rules = {
+            'af': { n: 'American Fidelity', b: 70, m: 35, a: 35, e: 30, u: 'Prêmio US$', t: 'p' },
+            'finep': { n: 'Captação (Finep)', b: 3, m: 10, a: 40, e: 50, u: 'Deal R$', t: 'v' },
+            'ma': { n: 'M&A (Deal)', b: 0.8, m: 30, a: 20, e: 50, u: 'Deal R$', t: 'v' },
+            'mkt': { n: 'Mercado Capitais', b: 2, m: 30, a: 20, e: 50, u: 'Deal R$', t: 'v' },
+            'he': { n: 'Home Equity', b: 3.5, m: 20, a: 40, e: 40, u: 'Crédito R$', t: 'v' },
+            'trust': { n: 'Trust Offshore', b: 45, m: 20, a: 40, e: 40, u: 'Aporte R$', t: 'p' },
+            'spec': { n: 'Special Situations', b: 15, m: 13.3, a: 53.3, e: 33.3, u: 'Volume R$', t: 'v' },
+            'cons': { n: 'Consórcios', b: 2, m: 35, a: 35, e: 30, u: 'Carta R$', t: 'v' },
+            'seg': { n: 'Seguros Nacionais', b: 40, m: 35, a: 35, e: 30, u: 'Prêmio R$', t: 'p' },
+            'fx': { n: 'Câmbio (Spread)', b: 1, m: 10, a: 35, e: 55, u: 'Volume R$', t: 'v' },
+            'imob': { n: 'Financ. Imob.', b: 1, m: 0, a: 50, e: 50, u: 'Financ. R$', t: 'v' },
+            'gest': { n: 'Gestão Patrim.', b: 1, m: 0, a: 50, e: 50, u: 'Operação R$', t: 'v' }
         };
 
-        let activeProduct = 'af';
+        let activeId = 'af';
+        let finderOn = false;
+
+        function login() {
+            if(document.getElementById('pass').value === 'Oslo2026') {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app-screen').style.display = 'flex';
+            } else { alert('Senha incorreta'); }
+        }
+
+        function handleCurrency(el) {
+            let v = el.value.replace(/\D/g,'');
+            v = (v/100).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+            el.value = v;
+        }
+
+        function getVal(id) {
+            let v = document.getElementById(id).value;
+            return parseFloat(v.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+        }
 
         function switchTab(id) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById('nav-' + id).classList.add('active');
-            calculate();
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('nav-'+id).classList.add('active');
         }
-
-        function init() {
-            const grid = document.getElementById('prod-grid');
-            for (let id in rules) {
-                const btn = document.createElement('button');
-                btn.className = 'prod-btn' + (id === activeProduct ? ' active' : '');
-                btn.innerText = rules[id].name;
-                btn.onclick = () => {
-                    activeProduct = id;
-                    document.querySelectorAll('.prod-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.getElementById('input-label').innerText = rules[id].unit;
-                    document.getElementById('ptax-field').style.display = (id === 'af' ? 'block' : 'none');
-                    calculate();
-                };
-                grid.appendChild(btn);
-            }
-            calculate();
-        }
-
-        const fmt = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
         function calculate() {
             // PJ1
-            const nnm = parseFloat(document.getElementById('nnm').value) || 0;
-            const roa = parseFloat(document.getElementById('roa').value) || 0;
-            const gain1 = ((nnm * (roa/100)) * 0.8 * 0.5) / 12;
-            document.getElementById('res1').innerText = fmt(gain1);
+            const nnm = getVal('nnm-in');
+            const roa = parseFloat(document.getElementById('roa-in').value) || 0;
+            const tax = parseFloat(document.getElementById('cfg-tax').value) / 100;
+            const res1 = ((nnm * (roa/100)) * (1-tax) * 0.5) / 12;
+            document.getElementById('pj1-res').innerText = res1.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
 
             // PJ2
-            const val = parseFloat(document.getElementById('pj2-val').value) || 0;
-            const px = parseFloat(document.getElementById('ptax').value) || 5.20;
-            const r = rules[activeProduct];
-            
-            let gross = (activeProduct === 'af') ? (val * px * (r.brute/100)) : (val * (r.brute/100));
-            const share = (gross * 0.8) * (1 - r.mesa/100) * (r.advisor / (r.advisor + r.office));
-            document.getElementById('res2').innerText = fmt(share);
+            const val = getVal('pj2-in');
+            const ptax = parseFloat(document.getElementById('ptax-in').value) || 5.20;
+            const fPct = parseFloat(document.getElementById('f-pct').value) || 0;
+            const r = rules[activeId];
+            let gross = (activeId === 'af') ? (val * ptax * (r.b/100)) : (val * (r.b/100));
+            const share = (gross * (1-tax)) * (1 - r.m/100) * (r.a / (r.a + r.e));
+            const final = finderOn ? (share * (1 - fPct/100)) : share;
+            document.getElementById('pj2-res').innerText = final.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
         }
 
-        window.onload = init;
+        function updateSettings() {
+            const rows = document.querySelectorAll('#settings-body tr');
+            rows.forEach(row => {
+                const id = row.getAttribute('data-id');
+                rules[id].b = parseFloat(row.cells[1].firstChild.value);
+                rules[id].m = parseFloat(row.cells[2].firstChild.value);
+                rules[id].a = parseFloat(row.cells[3].firstChild.value);
+                rules[id].e = parseFloat(row.cells[4].firstChild.value);
+            });
+            calculate();
+        }
+
+        function toggleFinder() {
+            finderOn = !finderOn;
+            const btn = document.getElementById('f-toggle');
+            document.getElementById('f-ui').classList.toggle('hidden', !finderOn);
+            document.getElementById('f-alert').classList.toggle('hidden', !finderOn);
+            btn.innerText = finderOn ? 'FINDER ATIVO' : 'ATIVAR FINDER';
+            btn.style.background = finderOn ? '#D4AF37' : '#193D5A';
+            btn.style.color = finderOn ? '#000' : '#fff';
+            calculate();
+        }
+
+        // Init UI
+        const grid = document.getElementById('prod-grid');
+        const sBody = document.getElementById('settings-body');
+        for (let id in rules) {
+            const b = document.createElement('button');
+            b.className = 'prod-btn' + (id==='af'?' active':'');
+            b.innerText = rules[id].n;
+            b.onclick = () => {
+                activeId = id;
+                document.querySelectorAll('.prod-btn').forEach(x => x.classList.remove('active'));
+                b.classList.add('active');
+                document.getElementById('pj2-label').innerText = rules[id].u;
+                document.getElementById('ptax-box').classList.toggle('hidden', id !== 'af');
+                calculate();
+            };
+            grid.appendChild(b);
+
+            const row = document.createElement('tr');
+            row.setAttribute('data-id', id);
+            row.innerHTML = `<td>${rules[id].n}</td>
+                <td><input type="number" value="${rules[id].b}" class="setting-input" oninput="updateSettings()"></td>
+                <td><input type="number" value="${rules[id].m}" class="setting-input" oninput="updateSettings()"></td>
+                <td><input type="number" value="${rules[id].a}" class="setting-input" oninput="updateSettings()"></td>
+                <td><input type="number" value="${rules[id].e}" class="setting-input" oninput="updateSettings()"></td>`;
+            sBody.appendChild(row);
+        }
+
+        // Default values
+        document.getElementById('nnm-in').value = "R$ 10.000.000,00";
+        document.getElementById('pj2-in').value = "R$ 1.000.000,00";
+        calculate();
     </script>
 </body>
 </html>
