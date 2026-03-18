@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oslo Partners | Portal do Sócio v6.0</title>
+    <style>
+        :root {
+            --navy: #193D5A;
+            --dark: #08121a;
+            --sidebar: #060c12;
+            --gold: #D4AF37;
+            --text: #ffffff;
+            --card: #122A42;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar);
+            border-right: 1px solid var(--navy);
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .logo {
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 50px;
+            letter-spacing: -1px;
+        }
+        .logo span { color: var(--gold); }
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nav-btn:hover { background: rgba(25, 61, 90, 0.4); }
+        .nav-btn.active { background-color: var(--gold); color: #000; }
+        
+        .content {
+            flex-grow: 1;
+            padding: 60px;
+            overflow-y: auto;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        h2 { font-size: 32px; font-weight: 900; margin-bottom: 10px; }
+        .subtitle { color: var(--gold); font-size: 12px; font-weight: bold; margin-bottom: 40px; text-transform: uppercase; }
+        
+        .card-container { display: flex; gap: 30px; }
+        .card {
+            background-color: var(--card);
+            border: 1px solid var(--navy);
+            padding: 30px;
+            border-radius: 20px;
+            flex: 1;
+        }
+        .result-box {
+            background-color: var(--navy);
+            border: 2px solid var(--gold);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex: 1;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        
+        .field { margin-bottom: 25px; }
+        label { display: block; font-size: 10px; font-weight: bold; color: var(--gold); margin-bottom: 10px; text-transform: uppercase; }
+        input {
+            width: 100%;
+            background: var(--dark);
+            border: 1px solid var(--navy);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 22px;
+            font-weight: bold;
+            outline: none;
+        }
+        input:focus { border-color: var(--gold); }
+        
+        .big-number { font-size: 48px; font-weight: 900; color: var(--gold); margin: 20px 0; }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .prod-btn {
+            background: #0d1e2b;
+            border: 1px solid var(--navy);
+            color: white;
+            padding: 12px 5px;
+            font-size: 10px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .prod-btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
+        
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; padding: 20px; }
+            .card-container { flex-direction: column; }
+            .product-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">OSLO <span>PARTNERS</span></div>
+        <button id="nav-pj1" class="nav-btn active" onclick="switchTab('pj1')">📈 Investimentos</button>
+        <button id="nav-pj2" class="nav-btn" onclick="switchTab('pj2')">💰 Multi-Produtos</button>
+        <div style="margin-top: auto; font-size: 10px; opacity: 0.3; text-align: center;">MAYCON VALENTE | CHAIRMAN</div>
+    </div>
+
+    <div class="content">
+        <!-- PJ1 -->
+        <div id="pj1" class="tab-content active">
+            <h2>Simulador de Recorrência</h2>
+            <p class="subtitle">Ativos sob Custódia (AUC)</p>
+            
+            <div class="card-container">
+                <div class="card">
+                    <div class="field">
+                        <label>Captação Líquida (NNM) R$</label>
+                        <input type="number" id="nnm" value="10000000" oninput="calculate()">
+                    </div>
+                    <div class="field">
+                        <label>ROA da Carteira (% a.a.)</label>
+                        <input type="number" id="roa" value="0.70" step="0.05" oninput="calculate()">
+                    </div>
+                </div>
+                <div class="result-box">
+                    <p style="font-size: 12px; opacity: 0.7;">SUA RECEITA MENSAL EST.</p>
+                    <div id="res1" class="big-number">R$ 23.333,33</div>
+                    <p style="font-size: 10px; opacity: 0.4;">Cálculo: (Volume * ROA * 0.8 * 0.5) / 12</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PJ2 -->
+        <div id="pj2" class="tab-content">
+            <h2>Ecossistema 12 Verticais</h2>
+            <p class="subtitle">Monetização de Deal e Estruturação</p>
+            
+            <div id="prod-grid" class="product-grid">
+                <!-- Injected via JS -->
+            </div>
+
+            <div class="card-container">
+                <div class="card">
+                    <div class="field">
+                        <label id="input-label">VALOR DA OPERAÇÃO R$</label>
+                        <input type="number" id="pj2-val" value="1000000" oninput="calculate()">
+                    </div>
+                    <div id="ptax-field" class="field" style="display:none;">
+                        <label>Câmbio (USD/BRL)</label>
+                        <input type="number" id="ptax" value="5.20" step="0.01" oninput="calculate()">
+                    </div>
+                </div>
+                <div class="result-box" style="background-color: var(--gold); color: #000; border: none;">
+                    <p style="font-size: 12px; font-weight: bold; opacity: 0.6;">SEU GANHO LÍQUIDO</p>
+                    <div id="res2" class="big-number" style="color: #000;">R$ 0,00</div>
+                    <p style="font-size: 10px; font-weight: bold;">PAGAMENTO UPFRONT</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const rules = {
+            'af': { name: 'American Fidelity', brute: 70, mesa: 35, advisor: 35, office: 30, unit: 'Prêmio US$', type: 'p' },
+            'finep': { name: 'Captação (Finep)', brute: 3, mesa: 10, advisor: 40, office: 50, unit: 'Deal R$', type: 'v' },
+            'ma': { name: 'M&A (Deal)', brute: 0.8, mesa: 30, advisor: 20, office: 50, unit: 'Deal R$', type: 'v' },
+            'mkt': { name: 'Mercado Capitais', brute: 2, mesa: 30, advisor: 20, office: 50, unit: 'Deal R$', type: 'v' },
+            'he': { name: 'Home Equity', brute: 3.5, mesa: 20, advisor: 40, office: 40, unit: 'Crédito R$', type: 'v' },
+            'trust': { name: 'Trust Offshore', brute: 45, mesa: 20, advisor: 40, office: 40, unit: 'Aporte R$', type: 'p' },
+            'spec': { name: 'Special Situations', brute: 15, mesa: 13.3, advisor: 53.3, office: 33.3, unit: 'Volume R$', type: 'v' },
+            'cons': { name: 'Consórcios', brute: 2, mesa: 35, advisor: 35, office: 30, unit: 'Carta R$', type: 'v' },
+            'seg': { name: 'Seguros Nacionais', brute: 40, mesa: 35, advisor: 35, office: 30, unit: 'Prêmio R$', type: 'p' },
+            'fx': { name: 'Câmbio (Spread)', brute: 1, mesa: 10, advisor: 35, office: 55, unit: 'Volume R$', type: 'v' },
+            'imob': { name: 'Financ. Imob.', brute: 1, mesa: 0, advisor: 50, office: 50, unit: 'Financ. R$', type: 'v' },
+            'gest': { name: 'Gestão Patrim.', brute: 1, mesa: 0, advisor: 50, office: 50, unit: 'Operação R$', type: 'v' }
+        };
+
+        let activeProduct = 'af';
+
+        function switchTab(id) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-' + id).classList.add('active');
+            calculate();
+        }
+
+        function init() {
+            const grid = document.getElementById('prod-grid');
+            for (let id in rules) {
+                const btn = document.createElement('button');
+                btn.className = 'prod-btn' + (id === activeProduct ? ' active' : '');
+                btn.innerText = rules[id].name;
+                btn.onclick = () => {
+                    activeProduct = id;
+                    document.querySelectorAll('.prod-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById('input-label').innerText = rules[id].unit;
+                    document.getElementById('ptax-field').style.display = (id === 'af' ? 'block' : 'none');
+                    calculate();
+                };
+                grid.appendChild(btn);
+            }
+            calculate();
+        }
+
+        const fmt = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+
+        function calculate() {
+            // PJ1
+            const nnm = parseFloat(document.getElementById('nnm').value) || 0;
+            const roa = parseFloat(document.getElementById('roa').value) || 0;
+            const gain1 = ((nnm * (roa/100)) * 0.8 * 0.5) / 12;
+            document.getElementById('res1').innerText = fmt(gain1);
+
+            // PJ2
+            const val = parseFloat(document.getElementById('pj2-val').value) || 0;
+            const px = parseFloat(document.getElementById('ptax').value) || 5.20;
+            const r = rules[activeProduct];
+            
+            let gross = (activeProduct === 'af') ? (val * px * (r.brute/100)) : (val * (r.brute/100));
+            const share = (gross * 0.8) * (1 - r.mesa/100) * (r.advisor / (r.advisor + r.office));
+            document.getElementById('res2').innerText = fmt(share);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
