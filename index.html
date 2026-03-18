@@ -3,289 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oslo Partners | Private Banking Portal</title>
+    <title>Oslo Partners | Private Wealth Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --navy: #193D5A;
-            --dark: #08121a;
-            --card: #0d1e2b;
-            --gold: #D4AF37;
-            --text: #ffffff;
-            --border: rgba(212, 175, 55, 0.2);
+            --bg-deep: #050a0f;
+            --bg-sidebar: #0a141d;
+            --accent-navy: #193D5A;
+            --accent-gold: #D4AF37;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-soft: rgba(212, 175, 55, 0.15);
+            --card-glass: rgba(25, 61, 90, 0.2);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: var(--dark); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; height: 100vh; overflow: hidden; }
-        
-        /* LOGIN SCREEN */
-        #login-screen { position: fixed; inset: 0; background: var(--dark); z-index: 1000; display: flex; align-items: center; justify-content: center; transition: 0.5s; }
-        .login-box { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--border); width: 350px; text-align: center; }
-        .login-input { width: 100%; padding: 15px; background: var(--dark); border: 1px solid var(--navy); color: white; border-radius: 8px; margin-bottom: 15px; outline: none; }
-        .login-btn { width: 100%; padding: 15px; background: var(--gold); border: none; font-weight: 900; border-radius: 8px; cursor: pointer; }
 
-        /* MAIN LAYOUT */
-        #app-screen { display: none; height: 100vh; flex-direction: row; }
-        .sidebar { width: 280px; background: #060c12; border-right: 1px solid var(--navy); padding: 40px 20px; display: flex; flex-direction: column; }
-        .content { flex-grow: 1; padding: 60px; overflow-y: auto; }
-        
-        .logo { font-size: 22px; font-weight: 900; margin-bottom: 50px; letter-spacing: -1px; }
-        .logo span { color: var(--gold); }
-        
-        .nav-btn { background: transparent; border: none; color: var(--text); padding: 15px; text-align: left; font-weight: 700; font-size: 13px; cursor: pointer; border-radius: 12px; margin-bottom: 8px; transition: 0.3s; opacity: 0.6; }
-        .nav-btn:hover { opacity: 1; background: rgba(25, 61, 90, 0.4); }
-        .nav-btn.active { background-color: var(--gold); color: #000; opacity: 1; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        body { background-color: var(--bg-deep); color: var(--text-main); font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden; }
 
-        /* CARDS & UI */
+        /* AUTH LAYER */
+        #auth-layer { position: fixed; inset: 0; background: var(--bg-deep); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .auth-card { background: var(--bg-sidebar); padding: 50px; border-radius: 4px; border: 1px solid var(--border-soft); width: 400px; box-shadow: 0 30px 60px rgba(0,0,0,0.8); text-align: center; }
+        .auth-logo { font-family: 'Cinzel', serif; font-size: 24px; color: var(--accent-gold); margin-bottom: 40px; letter-spacing: 3px; }
+        .auth-input { width: 100%; background: #050a0f; border: 1px solid #193D5A; padding: 15px; color: white; margin-bottom: 20px; outline: none; border-radius: 2px; }
+        .auth-btn { width: 100%; background: var(--accent-gold); color: black; padding: 15px; font-weight: 800; border: none; cursor: pointer; letter-spacing: 2px; transition: 0.3s; }
+        .auth-btn:hover { filter: brightness(1.2); }
+
+        /* APP LAYOUT */
+        #app-layout { display: none; height: 100vh; flex-direction: row; }
+        
+        /* SIDEBAR */
+        .sidebar { width: 280px; background-color: var(--bg-sidebar); border-right: 1px solid var(--accent-navy); padding: 40px 20px; display: flex; flex-direction: column; flex-shrink: 0; }
+        .sidebar-logo { font-family: 'Cinzel', serif; font-size: 20px; color: var(--text-main); margin-bottom: 60px; text-align: center; }
+        .sidebar-logo span { color: var(--accent-gold); }
+        
+        .nav-link { background: transparent; border: none; color: var(--text-muted); padding: 18px 20px; text-align: left; font-weight: 600; font-size: 11px; cursor: pointer; border-radius: 4px; margin-bottom: 5px; transition: 0.2s; text-transform: uppercase; letter-spacing: 2px; display: flex; align-items: center; gap: 15px; }
+        .nav-link:hover { color: white; background: rgba(25, 61, 90, 0.3); }
+        .nav-link.active { background: var(--accent-navy); color: var(--accent-gold); border-left: 3px solid var(--accent-gold); }
+
+        /* MAIN CONTENT */
+        .main-stage { flex-grow: 1; padding: 50px 80px; overflow-y: auto; background: radial-gradient(circle at top right, #0a1b2b, #050a0f); }
+        .section-header { margin-bottom: 50px; }
+        .section-header h2 { font-family: 'Cinzel', serif; font-size: 32px; color: var(--text-main); margin-bottom: 10px; font-weight: 700; }
+        .section-header p { color: var(--accent-gold); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 4px; }
+
+        /* FINANCIAL CARDS */
+        .grid-engine { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; }
+        .input-card { background: var(--card-glass); border: 1px solid var(--border-soft); border-radius: 8px; padding: 40px; backdrop-filter: blur(10px); }
+        .summary-card { background: var(--accent-navy); border: 1px solid var(--accent-gold); padding: 50px; border-radius: 8px; text-align: center; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 40px 80px rgba(0,0,0,0.5); }
+
+        /* FORM ELEMENTS */
+        .form-group { margin-bottom: 35px; }
+        .label-premium { display: block; font-size: 10px; font-weight: 800; color: var(--accent-gold); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; }
+        .input-premium { width: 100%; background: rgba(0,0,0,0.3); border: none; border-bottom: 2px solid var(--accent-navy); color: white; padding: 15px 0; font-size: 32px; font-weight: 800; outline: none; transition: 0.3s; }
+        .input-premium:focus { border-bottom-color: var(--accent-gold); }
+
+        .res-value { font-size: 56px; font-weight: 900; color: var(--accent-gold); margin: 25px 0; font-family: 'Inter', sans-serif; }
+        .res-label { font-size: 11px; font-weight: 700; color: white; opacity: 0.7; text-transform: uppercase; letter-spacing: 3px; }
+
+        /* PRODUCT SELECTOR */
+        .product-selector { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 40px; }
+        .prod-item { background: #0a141d; border: 1px solid var(--accent-navy); color: var(--text-muted); padding: 15px 10px; font-size: 9px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.2s; text-align: center; border-radius: 2px; }
+        .prod-item:hover { border-color: var(--accent-gold); color: white; }
+        .prod-item.active { background: var(--accent-gold); color: black; border-color: var(--accent-gold); }
+
+        /* SETTINGS MODULE */
+        .settings-table { width: 100%; border-collapse: collapse; margin-top: 30px; }
+        .settings-table th { text-align: left; padding: 20px; font-size: 10px; color: var(--accent-gold); text-transform: uppercase; border-bottom: 1px solid var(--accent-navy); }
+        .settings-table td { padding: 15px 20px; font-size: 13px; border-bottom: 1px solid rgba(25, 61, 90, 0.3); }
+        .mini-input { background: #050a0f; border: 1px solid var(--accent-navy); color: white; padding: 8px; width: 80px; text-align: center; border-radius: 4px; font-weight: bold; }
+
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        h2 { font-size: 32px; font-weight: 900; margin-bottom: 5px; }
-        .subtitle { color: var(--gold); font-size: 11px; font-weight: 700; margin-bottom: 40px; letter-spacing: 2px; }
-        
-        .card { background: var(--card); border: 1px solid var(--border); padding: 30px; border-radius: 24px; }
-        .res-box { background: var(--navy); border: 2px solid var(--gold); padding: 40px; border-radius: 24px; text-align: center; }
-        
-        label { display: block; font-size: 10px; font-weight: 800; color: var(--gold); margin-bottom: 10px; text-transform: uppercase; }
-        .input-group { position: relative; margin-bottom: 25px; }
-        .currency-input { width: 100%; background: var(--dark); border: 1px solid var(--navy); color: white; padding: 18px; border-radius: 12px; font-size: 24px; font-weight: 900; outline: none; }
-        .currency-input:focus { border-color: var(--gold); }
+        .tab-content.active { display: block; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .big-res { font-size: 52px; font-weight: 900; color: var(--gold); margin: 20px 0; }
+        .hidden { display: none; }
 
-        .prod-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 30px; }
-        .prod-btn { background: #0d1e2b; border: 1px solid var(--navy); color: white; padding: 12px; font-size: 10px; font-weight: bold; border-radius: 10px; cursor: pointer; transition: 0.2s; }
-        .prod-btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
-
-        /* SETTINGS TABLE */
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
-        th { text-align: left; padding: 12px; border-bottom: 2px solid var(--navy); color: var(--gold); }
-        td { padding: 12px; border-bottom: 1px solid rgba(25, 61, 90, 0.3); }
-        .setting-input { background: transparent; border: 1px solid var(--navy); color: white; padding: 5px; border-radius: 4px; width: 60px; text-align: center; }
-
-        @media (max-width: 768px) { #app-screen { flex-direction: column; } .sidebar { width: 100%; height: auto; } }
+        /* FOOTER */
+        .footer-sig { margin-top: auto; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 9px; color: var(--text-muted); text-align: center; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
-    <div id="login-screen">
-        <div class="login-box">
-            <h1 class="logo" style="margin-bottom: 30px;">OSLO <span>PARTNERS</span></h1>
-            <input type="text" id="user" placeholder="Usuário" class="login-input">
-            <input type="password" id="pass" placeholder="Senha" class="login-input">
-            <button class="login-btn" onclick="login()">ACESSAR PORTAL</button>
+    <!-- AUTH LAYER -->
+    <div id="auth-layer">
+        <div class="auth-card">
+            <div class="auth-logo">OSLO PARTNERS</div>
+            <input type="text" id="username" class="auth-input" placeholder="ACCESS IDENTIFIER">
+            <input type="password" id="password" class="auth-input" placeholder="ENCRYPTION KEY">
+            <button class="auth-btn" onclick="validateAuth()">AUTHENTICATE</button>
+            <p id="auth-error" style="color: #ff4757; font-size: 10px; margin-top: 20px; visibility: hidden;">ACCESS DENIED: INVALID CREDENTIALS</p>
         </div>
     </div>
 
-    <div id="app-screen">
-        <div class="sidebar">
-            <div class="logo">OSLO <span>PARTNERS</span></div>
-            <nav>
-                <button id="nav-pj1" class="nav-btn active" onclick="switchTab('pj1')">📈 DASHBOARD PJ1</button>
-                <button id="nav-pj2" class="nav-btn" onclick="switchTab('pj2')">💰 MULTI-PRODUTOS</button>
-                <button id="nav-finder" class="nav-btn" onclick="switchTab('finder')">🤝 GESTÃO FINDER</button>
-                <button id="nav-settings" class="nav-btn" onclick="switchTab('settings')">⚙️ CONFIGURAÇÕES</button>
+    <!-- MAIN APP -->
+    <div id="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo">OSLO <span>PARTNERS</span></div>
+            <nav style="flex: 1;">
+                <button class="nav-link active" onclick="nav('dashboard')">📈 Dashboard PJ1</button>
+                <button class="nav-link" onclick="nav('assets')">💰 Multi-Ativos PJ2</button>
+                <button class="nav-link" onclick="nav('finder')">🤝 Gestão Finder</button>
+                <button class="nav-link" onclick="nav('admin')">⚙️ Configurações</button>
             </nav>
-            <div style="margin-top: auto; font-size: 10px; opacity: 0.3; text-align: center;">MAYCON VALENTE | CHAIRMAN</div>
-        </div>
+            <div class="footer-sig">PRIVATE WEALTH SYSTEM V8.0</div>
+        </aside>
 
-        <div class="content">
-            <!-- PJ1 -->
-            <div id="pj1" class="tab-content active">
-                <h2>Simulador de Recorrência</h2>
-                <p class="subtitle">Recorrência Mensal de Investimentos</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
-                    <div class="card">
-                        <div class="input-group">
-                            <label>Captação Líquida (NNM)</label>
-                            <input type="text" id="nnm-in" class="currency-input" oninput="handleCurrency(this); calculate();">
+        <main class="main-stage">
+            
+            <!-- DASHBOARD PJ1 -->
+            <section id="view-dashboard" class="tab-content active">
+                <div class="section-header">
+                    <h2>Gestão de Recorrência</h2>
+                    <p>Asset Under Custody (AUC) & Yield Simulation</p>
+                </div>
+                <div class="grid-engine">
+                    <div class="input-card">
+                        <div class="form-group">
+                            <label class="label-premium">Net New Money (NNM) / Captação</label>
+                            <input type="text" id="pj1-nnm" class="input-premium money-mask" placeholder="R$ 0,00" oninput="runCalculations()">
                         </div>
-                        <div class="input-group">
-                            <label>ROA Médio da Carteira (%)</label>
-                            <input type="number" id="roa-in" class="currency-input" step="0.05" value="0.70" oninput="calculate()">
+                        <div class="form-group">
+                            <label class="label-premium">Return on Assets (ROA) Médio % a.a.</label>
+                            <input type="number" id="pj1-roa" class="input-premium" value="0.70" step="0.05" oninput="runCalculations()">
                         </div>
                     </div>
-                    <div class="res-box">
-                        <label>Sua Receita Mensal Estimada</label>
-                        <div id="pj1-res" class="big-res">R$ 0,00</div>
-                        <p style="font-size: 10px; opacity: 0.4;">Cálculo: (NNM * ROA * 0.8 * 0.5) / 12</p>
+                    <div class="summary-card">
+                        <span class="res-label">Receita Mensal Estimada</span>
+                        <div id="pj1-out" class="res-value">R$ 0,00</div>
+                        <p style="font-size: 9px; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px;">Líquido de Impostos e Repasse Oslo (50%)</p>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- PJ2 -->
-            <div id="pj2" class="tab-content">
-                <h2>Ecossistema 12 Verticais</h2>
-                <p class="subtitle">Monetização de Deal e Estruturação</p>
-                <div id="prod-grid" class="prod-grid"></div>
-                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px;">
-                    <div class="card">
-                        <div class="input-group">
-                            <label id="pj2-label">VOLUME DA OPERAÇÃO</label>
-                            <input type="text" id="pj2-in" class="currency-input" oninput="handleCurrency(this); calculate();">
+            <!-- ASSETS PJ2 -->
+            <section id="view-assets" class="tab-content">
+                <div class="section-header">
+                    <h2>Ecossistema de Soluções</h2>
+                    <p>Estruturação, Crédito e Offshore Banking</p>
+                </div>
+                <div class="product-selector" id="prod-grid"></div>
+                <div class="grid-engine">
+                    <div class="input-card">
+                        <div class="form-group">
+                            <label class="label-premium" id="pj2-input-label">Volume da Operação</label>
+                            <input type="text" id="pj2-val" class="input-premium money-mask" placeholder="R$ 0,00" oninput="runCalculations()">
                         </div>
-                        <div id="ptax-box" class="hidden">
-                            <label>Câmbio de Referência (BRL)</label>
-                            <input type="number" id="ptax-in" class="currency-input" value="5.20" oninput="calculate()">
+                        <div id="fx-layer" class="hidden">
+                            <label class="label-premium">Câmbio de Referência (BRL)</label>
+                            <input type="number" id="pj2-ptax" class="input-premium" value="5.20" oninput="runCalculations()">
                         </div>
                     </div>
-                    <div class="res-box" style="background: var(--gold); color: black; border: none;">
-                        <label style="color: rgba(0,0,0,0.5)">Seu Ganho Líquido (Upfront)</label>
-                        <div id="pj2-res" class="big-res" style="color: black;">R$ 0,00</div>
-                        <div id="f-alert" class="hidden" style="font-size: 10px; font-weight: 900;">⚠️ FINDER DEDUZIDO</div>
+                    <div class="summary-card" style="background: var(--accent-gold); border: none;">
+                        <span class="res-label" style="color: black;">Repasse Líquido Upfront</span>
+                        <div id="pj2-out" class="res-value" style="color: black;">R$ 0,00</div>
+                        <div id="finder-tag" class="hidden" style="color: black; font-size: 9px; font-weight: 900; background: rgba(0,0,0,0.1); padding: 5px; border-radius: 4px;">DEDUÇÃO FINDER ATIVA</div>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- FINDER -->
-            <div id="finder" class="tab-content">
-                <div style="max-width: 600px; margin: 0 auto; text-align: center;">
-                    <h2>Gestão de Finder</h2>
-                    <p class="subtitle">Parcerias de Originação</p>
-                    <div class="card">
-                        <button id="f-toggle" onclick="toggleFinder()" class="login-btn" style="background: var(--navy); color: white; margin-bottom: 30px;">ATIVAR FINDER</button>
-                        <div id="f-ui" class="hidden">
-                            <label>Percentual do Parceiro (%)</label>
-                            <input type="number" id="f-pct" class="currency-input" value="20" oninput="calculate()">
-                        </div>
+            <section id="view-finder" class="tab-content">
+                <div class="section-header" style="text-align: center;">
+                    <h2>Relacionamento Finder</h2>
+                    <p>Gestão de Sócios de Originação Externa</p>
+                </div>
+                <div class="input-card" style="max-width: 600px; margin: 0 auto; text-align: center;">
+                    <div style="margin-bottom: 40px;">
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 30px;">O módulo Finder permite o rateio automático do seu prêmio com parceiros externos, mantendo a margem da Holding Oslo Partners intacta.</p>
+                        <button id="finder-toggle" onclick="toggleFinder()" class="auth-btn" style="background: var(--accent-navy); color: white; width: auto; padding: 15px 40px;">ATIVAR MODO FINDER</button>
+                    </div>
+                    <div id="finder-config" class="hidden">
+                        <label class="label-premium">Percentual de Originação do Parceiro (%)</label>
+                        <input type="number" id="finder-pct" class="input-premium" value="20" style="text-align: center;" oninput="runCalculations()">
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- SETTINGS -->
-            <div id="settings" class="tab-content">
-                <h2>Premissas de Partnership</h2>
-                <p class="subtitle">Painel de Controle Maycon</p>
-                <div class="card">
-                    <label>Imposto Geral Oslo (%)</label>
-                    <input type="number" id="cfg-tax" value="20" style="width: 100px;" oninput="updateSettings()">
-                    <table>
+            <!-- ADMIN -->
+            <section id="view-admin" class="tab-content">
+                <div class="section-header">
+                    <h2>Painel de Governança</h2>
+                    <p>Premissas de Negócio e Partnership</p>
+                </div>
+                <div class="input-card" style="padding: 0;">
+                    <div style="padding: 30px; border-bottom: 1px solid var(--accent-navy);">
+                        <label class="label-premium">Alíquota de Imposto Geral (%)</label>
+                        <input type="number" id="tax-rate" value="20" class="mini-input" oninput="syncRules()">
+                    </div>
+                    <table class="settings-table">
                         <thead>
-                            <tr><th>Ativo</th><th>Bruto (%)</th><th>Mesa (%)</th><th>Assessor (%)</th><th>Escritório (%)</th></tr>
+                            <tr><th>Ativo</th><th>Bruto %</th><th>Mesa %</th><th>Assessor %</th><th>Oslo %</th></tr>
                         </thead>
-                        <tbody id="settings-body"></tbody>
+                        <tbody id="rules-engine"></tbody>
                     </table>
                 </div>
-            </div>
-        </div>
+            </section>
+
+        </main>
     </div>
 
     <script>
-        let rules = {
-            'af': { n: 'American Fidelity', b: 70, m: 35, a: 35, e: 30, u: 'Prêmio US$', t: 'p' },
-            'finep': { n: 'Captação (Finep)', b: 3, m: 10, a: 40, e: 50, u: 'Deal R$', t: 'v' },
-            'ma': { n: 'M&A (Deal)', b: 0.8, m: 30, a: 20, e: 50, u: 'Deal R$', t: 'v' },
-            'mkt': { n: 'Mercado Capitais', b: 2, m: 30, a: 20, e: 50, u: 'Deal R$', t: 'v' },
-            'he': { n: 'Home Equity', b: 3.5, m: 20, a: 40, e: 40, u: 'Crédito R$', t: 'v' },
+        // CORE STATE & RULES
+        let coreRules = {
+            'af': { n: 'American Fidelity', b: 70, m: 35, a: 35, e: 30, u: 'Prêmio em US$', t: 'p' },
+            'finep': { n: 'Captação (Finep)', b: 3, m: 10, a: 40, e: 50, u: 'Volume Deal R$', t: 'v' },
+            'ma': { n: 'M&A (Referral)', b: 0.8, m: 30, a: 20, e: 50, u: 'Volume Deal R$', t: 'v' },
+            'mkt': { n: 'Mercado Capitais', b: 2, m: 30, a: 20, e: 50, u: 'Volume Deal R$', t: 'v' },
+            'he': { n: 'Home Equity', b: 3.5, m: 20, a: 40, e: 40, u: 'Volume Crédito R$', t: 'v' },
             'trust': { n: 'Trust Offshore', b: 45, m: 20, a: 40, e: 40, u: 'Aporte R$', t: 'p' },
-            'spec': { n: 'Special Situations', b: 15, m: 13.3, a: 53.3, e: 33.3, u: 'Volume R$', t: 'v' },
+            'spec': { n: 'Special Situations', b: 15, m: 13.3, a: 53.3, e: 33.3, u: 'Volume Ativo R$', t: 'v' },
             'cons': { n: 'Consórcios', b: 2, m: 35, a: 35, e: 30, u: 'Carta R$', t: 'v' },
             'seg': { n: 'Seguros Nacionais', b: 40, m: 35, a: 35, e: 30, u: 'Prêmio R$', t: 'p' },
-            'fx': { n: 'Câmbio (Spread)', b: 1, m: 10, a: 35, e: 55, u: 'Volume R$', t: 'v' },
-            'imob': { n: 'Financ. Imob.', b: 1, m: 0, a: 50, e: 50, u: 'Financ. R$', t: 'v' },
-            'gest': { n: 'Gestão Patrim.', b: 1, m: 0, a: 50, e: 50, u: 'Operação R$', t: 'v' }
+            'fx': { n: 'Câmbio (Spread)', b: 1, m: 10, a: 35, e: 55, u: 'Volume Remessa R$', t: 'v' },
+            'imob': { n: 'Financ. Imob.', b: 1, m: 0, a: 50, e: 50, u: 'Volume Financ. R$', t: 'v' },
+            'gest': { n: 'Gestão Patrim.', b: 1, m: 0, a: 50, e: 50, u: 'Volume Operação R$', t: 'v' }
         };
 
-        let activeId = 'af';
-        let finderOn = false;
+        let activeProduct = 'af';
+        let isFinderEnabled = false;
 
-        function login() {
-            if(document.getElementById('pass').value === 'Oslo2026') {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('app-screen').style.display = 'flex';
-            } else { alert('Senha incorreta'); }
+        // AUTH SYSTEM
+        function validateAuth() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            if(u.toLowerCase() === 'maycon' && p === 'Oslo2026') {
+                document.getElementById('auth-layer').style.display = 'none';
+                document.getElementById('app-layout').style.display = 'flex';
+                initSystem();
+            } else {
+                document.getElementById('auth-error').style.visibility = 'visible';
+            }
         }
 
-        function handleCurrency(el) {
-            let v = el.value.replace(/\D/g,'');
-            v = (v/100).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-            el.value = v;
-        }
+        // CURRENCY MASKING ENGINE
+        document.querySelectorAll('.money-mask').forEach(input => {
+            input.addEventListener('input', function(e) {
+                let v = e.target.value.replace(/\D/g, '');
+                v = (v / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                e.target.value = v;
+            });
+        });
 
-        function getVal(id) {
+        function getRawValue(id) {
             let v = document.getElementById(id).value;
+            if(!v) return 0;
             return parseFloat(v.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
         }
 
-        function switchTab(id) {
+        // NAVIGATION
+        function nav(id) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('nav-'+id).classList.add('active');
+            document.getElementById('view-' + id).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            event.currentTarget.classList.add('active');
         }
 
-        function calculate() {
+        // FINDER LOGIC
+        function toggleFinder() {
+            isFinderEnabled = !isFinderEnabled;
+            const btn = document.getElementById('finder-toggle');
+            document.getElementById('finder-config').classList.toggle('hidden', !isFinderEnabled);
+            document.getElementById('finder-tag').classList.toggle('hidden', !isFinderEnabled);
+            btn.innerText = isFinderEnabled ? 'DESATIVAR MODO FINDER' : 'ATIVAR MODO FINDER';
+            btn.style.background = isFinderEnabled ? '#D4AF37' : '#193D5A';
+            btn.style.color = isFinderEnabled ? 'black' : 'white';
+            runCalculations();
+        }
+
+        // CALCULATION ENGINE
+        function runCalculations() {
+            const tax = parseFloat(document.getElementById('tax-rate').value) / 100;
+            
             // PJ1
-            const nnm = getVal('nnm-in');
-            const roa = parseFloat(document.getElementById('roa-in').value) || 0;
-            const tax = parseFloat(document.getElementById('cfg-tax').value) / 100;
-            const res1 = ((nnm * (roa/100)) * (1-tax) * 0.5) / 12;
-            document.getElementById('pj1-res').innerText = res1.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+            const nnm = getRawValue('pj1-nnm');
+            const roa = parseFloat(document.getElementById('pj1-roa').value) || 0;
+            const pj1Res = ((nnm * (roa/100)) * (1 - tax) * 0.5) / 12;
+            document.getElementById('pj1-out').innerText = pj1Res.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
             // PJ2
-            const val = getVal('pj2-in');
-            const ptax = parseFloat(document.getElementById('ptax-in').value) || 5.20;
-            const fPct = parseFloat(document.getElementById('f-pct').value) || 0;
-            const r = rules[activeId];
-            let gross = (activeId === 'af') ? (val * ptax * (r.b/100)) : (val * (r.b/100));
-            const share = (gross * (1-tax)) * (1 - r.m/100) * (r.a / (r.a + r.e));
-            const final = finderOn ? (share * (1 - fPct/100)) : share;
-            document.getElementById('pj2-res').innerText = final.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+            const val = getRawValue('pj2-val');
+            const ptax = parseFloat(document.getElementById('pj2-ptax').value) || 5.20;
+            const fpct = parseFloat(document.getElementById('finder-pct').value) || 0;
+            const r = coreRules[activeProduct];
+            
+            let gross = (activeProduct === 'af') ? (val * ptax * (r.b/100)) : (val * (r.b/100));
+            const netBase = (gross * (1 - tax)) * (1 - r.m/100);
+            const advisorShare = netBase * (r.a / (r.a + r.e));
+            const finalValue = isFinderEnabled ? (advisorShare * (1 - (fpct/100))) : advisorShare;
+            
+            document.getElementById('pj2-out').innerText = finalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
-        function updateSettings() {
-            const rows = document.querySelectorAll('#settings-body tr');
+        function syncRules() {
+            const rows = document.querySelectorAll('#rules-engine tr');
             rows.forEach(row => {
                 const id = row.getAttribute('data-id');
-                rules[id].b = parseFloat(row.cells[1].firstChild.value);
-                rules[id].m = parseFloat(row.cells[2].firstChild.value);
-                rules[id].a = parseFloat(row.cells[3].firstChild.value);
-                rules[id].e = parseFloat(row.cells[4].firstChild.value);
+                const inputs = row.querySelectorAll('input');
+                coreRules[id].b = parseFloat(inputs[0].value);
+                coreRules[id].m = parseFloat(inputs[1].value);
+                coreRules[id].a = parseFloat(inputs[2].value);
+                coreRules[id].e = parseFloat(inputs[3].value);
             });
-            calculate();
+            runCalculations();
         }
 
-        function toggleFinder() {
-            finderOn = !finderOn;
-            const btn = document.getElementById('f-toggle');
-            document.getElementById('f-ui').classList.toggle('hidden', !finderOn);
-            document.getElementById('f-alert').classList.toggle('hidden', !finderOn);
-            btn.innerText = finderOn ? 'FINDER ATIVO' : 'ATIVAR FINDER';
-            btn.style.background = finderOn ? '#D4AF37' : '#193D5A';
-            btn.style.color = finderOn ? '#000' : '#fff';
-            calculate();
+        function initSystem() {
+            const grid = document.getElementById('prod-grid');
+            const engine = document.getElementById('rules-engine');
+            
+            for (let id in coreRules) {
+                // Build Buttons
+                const btn = document.createElement('div');
+                btn.className = 'prod-item' + (id === 'af' ? ' active' : '');
+                btn.innerText = coreRules[id].n;
+                btn.onclick = (e) => {
+                    activeProduct = id;
+                    document.querySelectorAll('.prod-item').forEach(x => x.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    document.getElementById('pj2-input-label').innerText = coreRules[id].u;
+                    document.getElementById('fx-layer').classList.toggle('hidden', id !== 'af');
+                    runCalculations();
+                };
+                grid.appendChild(btn);
+
+                // Build Admin Table
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-id', id);
+                tr.innerHTML = `
+                    <td style="font-weight: bold;">${coreRules[id].n}</td>
+                    <td><input type="number" class="mini-input" value="${coreRules[id].b}" oninput="syncRules()"></td>
+                    <td><input type="number" class="mini-input" value="${coreRules[id].m}" oninput="syncRules()"></td>
+                    <td><input type="number" class="mini-input" value="${coreRules[id].a}" oninput="syncRules()"></td>
+                    <td><input type="number" class="mini-input" value="${coreRules[id].e}" oninput="syncRules()"></td>
+                `;
+                engine.appendChild(tr);
+            }
+            
+            // Set Initial Masked Values
+            document.getElementById('pj1-nnm').value = (10000000).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('pj2-val').value = (1000000).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            runCalculations();
         }
-
-        // Init UI
-        const grid = document.getElementById('prod-grid');
-        const sBody = document.getElementById('settings-body');
-        for (let id in rules) {
-            const b = document.createElement('button');
-            b.className = 'prod-btn' + (id==='af'?' active':'');
-            b.innerText = rules[id].n;
-            b.onclick = () => {
-                activeId = id;
-                document.querySelectorAll('.prod-btn').forEach(x => x.classList.remove('active'));
-                b.classList.add('active');
-                document.getElementById('pj2-label').innerText = rules[id].u;
-                document.getElementById('ptax-box').classList.toggle('hidden', id !== 'af');
-                calculate();
-            };
-            grid.appendChild(b);
-
-            const row = document.createElement('tr');
-            row.setAttribute('data-id', id);
-            row.innerHTML = `<td>${rules[id].n}</td>
-                <td><input type="number" value="${rules[id].b}" class="setting-input" oninput="updateSettings()"></td>
-                <td><input type="number" value="${rules[id].m}" class="setting-input" oninput="updateSettings()"></td>
-                <td><input type="number" value="${rules[id].a}" class="setting-input" oninput="updateSettings()"></td>
-                <td><input type="number" value="${rules[id].e}" class="setting-input" oninput="updateSettings()"></td>`;
-            sBody.appendChild(row);
-        }
-
-        // Default values
-        document.getElementById('nnm-in').value = "R$ 10.000.000,00";
-        document.getElementById('pj2-in').value = "R$ 1.000.000,00";
-        calculate();
     </script>
 </body>
 </html>
